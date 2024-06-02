@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuid} from 'uuid'
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
+import { error } from 'console';
 // import { Car } from './interfaces/car.interface';
 
 @Injectable()
@@ -51,7 +52,9 @@ export class CarsService {
   }
 
   deleteCar(id){
-    this.cars = {...this.cars.filter(car => car.id != id)};
+    const existCar = this.cars.filter(car => car.id == id)
+    if(existCar.length == 0) throw new NotFoundException('The ID does not exist')
+    this.cars = [...this.cars.filter(car => car.id != id)];
     return this.cars;
   }
 }
