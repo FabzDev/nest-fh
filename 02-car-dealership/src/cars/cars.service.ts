@@ -36,7 +36,7 @@ export class CarsService {
   }
 
   createCar(newCar){
-    this.cars.push(newCar)
+    this.cars.push({id: uuid(), ...newCar})
   }
 
   updateCar(newCar){
