@@ -23,13 +23,13 @@ export class PokemonsController {
     return this.pokemonsService.findOne(term);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePokemonDto: UpdatePokemonDto) {
-    return this.pokemonsService.update(+id, updatePokemonDto);
+  @Patch(':term')
+  update(@Param('term') term: string, @Body() updatePokemonDto: UpdatePokemonDto) {
+    return this.pokemonsService.update(term, updatePokemonDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pokemonsService.remove(+id);
+  @Delete(':term')
+  remove(@Param('term') term: string) {
+    return this.pokemonsService.remove(term);
   }
 }
