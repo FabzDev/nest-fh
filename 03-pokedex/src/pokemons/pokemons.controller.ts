@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PokemonsService } from './pokemons.service';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
+import { ParseMongoIdPipe } from 'src/common/pipes/parse-mongo-id.pipe';
 
 @Controller('pokemons')
 export class PokemonsController {
@@ -29,7 +30,7 @@ export class PokemonsController {
   }
 
   @Delete(':term')
-  remove(@Param('term') term: string) {
+  remove(@Param('term', ParseMongoIdPipe) term: string) {
     return this.pokemonsService.remove(term);
   }
 }
