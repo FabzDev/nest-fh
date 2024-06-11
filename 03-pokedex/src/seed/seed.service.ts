@@ -5,27 +5,33 @@ import { Model } from 'mongoose';
 import { CreatePokemonDto } from 'src/pokemons/dto/create-pokemon.dto';
 import { Pokemon } from 'src/pokemons/entities/pokemon.entity';
 import { PokemonResponse } from 'src/pokemons/interfaces/poke-response.interface';
+import { AxiosAdapter } from '../common/adapters/axios.adapter';
 
 @Injectable()
 export class SeedService {
-  private readonly myAxios: AxiosInstance = axios;
 
   constructor(
     @InjectModel(Pokemon.name)
     private pokeModel = Model<Pokemon>,
+
+    private httpAdapter: AxiosAdapter
   ) {}
 
   async executeSeed() {
-    const result = await this.myAxios.get<PokemonResponse>(
-      'https://pokeapi.co/api/v2/pokemon?limit=151',
+    await this.pokeModel.deleteMany({});
+    const data  = await this.httpAdapter.get<PokemonResponse>(
+      'https://pokeapi.co/api/v2/pokemon?limit=650',
     );
-    const { data } = result;
-    data.results.forEach(async ({ name, url }) => {
+    const pokemonsToInsert: { no: number; name: string }[] = [];
+
+    data.results.forEach(({ name, url }) => {
       const segments = url.split('/');
       const no = +segments[segments.length - 2];
       const pokemonDTO: CreatePokemonDto = { name, no };
-      await this.pokeModel.create(pokemonDTO);
-      });
-    return "Seed Executed"
+      pokemonsToInsert.push(pokemonDTO);
+    });
+    this.pokeModel.insertMany(pokemonsToInsert);
+
+    return 'Seed Executed';
   }
 }
